@@ -1,0 +1,79 @@
+.container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 300px;
+  width: 660px;
+  white-space: nowrap;
+  margin: 10px;
+}
+
+.keyboard {
+  padding: 0;
+  margin: 0;
+  width: max-content;
+  & div {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    box-sizing: border-box;
+    float: left;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    cursor: grab;
+    font: 16px "Open Sans", "Lucida Grande", "Arial", sans-serif;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 2px 2px darkgray;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    & p {
+      pointer-events: none;
+      margin: 0;
+    }
+  }
+  & div:not([class*="#"]) {
+    width: 50px;
+    z-index: 0;
+    background-color: #e2dd98;
+    height: 220px;
+  }
+  & div[class*="#"] {
+    color: white;
+    margin: 0 0 0 -18px;
+    z-index: 1;
+    background-color: #8a7710;
+    width: 36px;
+    height: 140px;
+  }
+  & .レ,
+  .ミ,
+  .ソ,
+  .ラ,
+  .シ {
+    margin: 0 0 0 -18px;
+  }
+  & .key:first-child {
+    margin-left: 20px;
+  }
+  & .key:last-child {
+    margin-right: 10px;
+  }
+}
+.auto_play_text {
+  display: inline-block;
+  height: 1em;
+  margin: 0;
+}
+.display {
+  height: 100px;
+  width: 120px;
+  border: #000 3px solid;
+  text-align: center;
+  line-height: 100px;
+  border-radius: 10px;
+  font-size: 40px;
+}
