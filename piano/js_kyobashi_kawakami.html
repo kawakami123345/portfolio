@@ -127,9 +127,10 @@
       }
 
       class KeyEvents {
-        constructor(tone, screen) {
+        constructor(tone, screen, scorelist) {
           this.tone = tone;
           this.screen = screen;
+          this.scorelist = scorelist;
         }
         enable_keys() {
           this.screen.keyboard_jq
@@ -177,13 +178,23 @@
         }
         enable_auto_play_button(auto_play) {
           this.screen.auto_play_button.on("click", () =>
-            auto_play.press_auto_play_button()
+            this.press_auto_play_button(auto_play)
           );
         }
         enable_option_button() {
           this.screen.volume.on("input", (ev) => {
             this.tone.main_gain_node.gain.value = ev.target.value;
           });
+        }
+        press_auto_play_button(auto_play) {
+          let score = this.scorelist.get_random_score();
+          this.screen.auto_play_button
+            .prop("value", "演奏中止")
+            .off()
+            .on("click", () => auto_play.stop_auto_play());
+          this.screen.auto_play_text.text(`自動演奏中です：${score.name}`);
+          this.disable_keys();
+          auto_play.auto_play(score.score);
         }
       }
       class Tone {
@@ -282,23 +293,13 @@
           this.screen.auto_play_button
             .prop("value", "自動演奏")
             .off()
-            .on("click", () => this.press_auto_play_button());
+            .on("click", () => this.key_events.press_auto_play_button(this));
           this.screen.auto_play_text.text("");
           this.screen.show_display();
           this.screen.reset_color();
           this.key_events.enable_keys();
           this.tone.stop_tone(this.last_note);
           clearTimeout(this.timeout_id);
-        }
-        press_auto_play_button() {
-          let score = this.scorelist.get_random_score();
-          this.screen.auto_play_button
-            .prop("value", "演奏中止")
-            .off()
-            .on("click", () => this.stop_auto_play());
-          this.screen.auto_play_text.text(`自動演奏中です：${score.name}`);
-          this.key_events.disable_keys();
-          this.auto_play(score.score);
         }
       }
       class Instrument {
@@ -349,11 +350,15 @@
           }
           this.notes.splice(0, shift);
 
+          this.scorelist = new ScoreList();
           this.tone = new Tone(this.audio, this.main_gain_node);
 
           this.screen = new Screen(main_jquery, this.notes, this.no);
-          this.keyEvents = new KeyEvents(this.tone, this.screen);
-          this.scorelist = new ScoreList();
+          this.keyEvents = new KeyEvents(
+            this.tone,
+            this.screen,
+            this.scorelist
+          );
           this.auto_play = new AutoPlay(
             this.screen,
             this.keyEvents,
